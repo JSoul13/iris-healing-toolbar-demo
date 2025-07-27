@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iris Healing Assistant Demo</title>
+    <style>
+        body { background: #f0f0f0; font-family: Arial, sans-serif; }
+        #toolbar-popup {
+            position: fixed; top: 50px; right: 20px; width: 400px; height: 600px; background: #1a1f2c; /* Deep blue-gray */
+            color: #e0e0e0; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.5); overflow-y: auto;
+        }
+        .branding { font-size: 20px; color: #4caf50; /* Subtle green */ margin-bottom: 10px; }
+        .branding::before { content: '🌸 '; /* Iris flower placeholder */ }
+        #chat-input { width: 100%; padding: 10px; background: #2c3344; border: none; color: #e0e0e0; }
+        #chat-output { margin-top: 20px; background: #232a3b; padding: 10px; border-radius: 5px; }
+        .sponsored-ad { margin-top: 10px; background: #3b4a5e; padding: 10px; border-radius: 5px; font-style: italic; }
+        .social-posts { margin-top: 10px; color: #a5d6a7; /* Light green */ }
+        button { background: #4caf50; color: white; border: none; padding: 10px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div id="toolbar-popup">
+        <div class="branding">Iris Healing Assistant</div>
+        <form id="chat-form">
+            <input type="text" id="chat-input" placeholder="Type your query (e.g., 'how to reduce anxiety?')" required>
+            <button type="submit">Send</button>
+        </form>
+        <div id="chat-output"></div>
+    </div>
+
+    <script>
+        // POC: AI Intent Detector
+        const HIGH_INTENT_KEYWORDS = ['detox', 'relapse', 'quit drinking', 'addiction help', 'rehab'];
+
+        function detectHighIntent(query) {
+            const lowerQuery = query.toLowerCase();
+            return HIGH_INTENT_KEYWORDS.some(keyword => lowerQuery.includes(keyword));
+        }
+
+        // Mock AI responses
+        const mockLowIntentResponse = "Here are some tips to reduce anxiety: Practice deep breathing, go for a walk, or meditate. Plus, uplifting recovery posts from Reddit:";
+        const mockHighIntentResponse = "Quitting drinking is a brave step. Start with support groups and professional help. (High-intent detected)";
+        const mockSocialPosts = "<div class='social-posts'>Post 1: 'I overcame anxiety through journaling!'<br>Post 2: 'Recovery story: One day at a time.'</div>";
+        const mockAd = "<div class='sponsored-ad'>Sponsored: Free counseling from Partner Rehab Center. Call 1-800-HELP-NOW.</div>";
+
+        // Handle form submit
+        document.getElementById('chat-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const query = document.getElementById('chat-input').value;
+            const output = document.getElementById('chat-output');
+            output.innerHTML = ''; // Clear previous
+
+            if (detectHighIntent(query)) {
+                output.innerHTML = mockHighIntentResponse + mockAd;
+            } else {
+                output.innerHTML = mockLowIntentResponse + mockSocialPosts;
+            }
+
+            document.getElementById('chat-input').value = ''; // Reset input
+        });
+    </script>
+</body>
+</html>
