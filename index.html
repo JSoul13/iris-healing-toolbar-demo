@@ -3,36 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iris Healing Assistant Demo (Seamless Image Integration)</title>
+    <title>Iris Healing Assistant Demo (Full-Page Seamless Version)</title>
     <style>
-        body { background: #f0f0f0; font-family: Arial, sans-serif; }
-        #toolbar-popup {
-            position: fixed; top: 50px; right: 20px; width: 450px; height: 650px; background: #1a1f2c; /* Deep blue-gray from images */
-            color: #e0e0e0; padding: 20px; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.6); overflow-y: auto;
-            font-size: 14px; line-height: 1.5;
+        body { 
+            background: #f0f0f0; font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; 
+            min-height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; 
         }
-        .branding { font-size: 22px; color: #4caf50; /* Subtle green */ margin-bottom: 15px; font-weight: bold; }
+        #toolbar-container {
+            width: 100%; max-width: 500px; background: #1a1f2c; /* Deep blue-gray */
+            color: #e0e0e0; padding: 30px; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.6); 
+            text-align: center; 
+        }
+        .branding { font-size: 24px; color: #4caf50; /* Subtle green */ margin-bottom: 20px; font-weight: bold; }
         .branding::before { 
             content: ''; 
             background: url('https://cdn.abacus.ai/images/5e732ae4-f2ba-4c9f-a945-97b5b8c5ba44.png') no-repeat; 
-            background-size: contain; 
-            width: 24px; height: 24px; display: inline-block; vertical-align: middle; margin-right: 5px; 
+            background-size: contain; width: 32px; height: 32px; display: inline-block; vertical-align: middle; margin-right: 8px; 
         }
-        #chat-input { width: 100%; padding: 12px; background: #2c3344; border: none; color: #e0e0e0; border-radius: 5px; margin-bottom: 10px; }
-        #chat-output { margin-top: 20px; text-align: center; } /* Center images for seamless feel */
-        #chat-output img { max-width: 100%; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.4); }
-        button { background: #4caf50; color: white; border: none; padding: 12px; border-radius: 5px; cursor: pointer; width: 100%; }
+        #chat-input { width: 100%; padding: 12px; background: #2c3344; border: none; color: #e0e0e0; border-radius: 5px; margin-bottom: 10px; box-sizing: border-box; }
+        #chat-output { margin-top: 20px; background: #232a3b; padding: 15px; border-radius: 10px; min-height: 200px; text-align: left; }
+        #chat-output img { max-width: 100%; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.4); display: block; margin: 0 auto; }
+        .sponsored-ad { margin-top: 10px; background: #3b4a5e; padding: 10px; border-radius: 5px; font-style: italic; }
+        .social-posts { margin-top: 10px; color: #a5d6a7; /* Light green */ }
+        button { background: #4caf50; color: white; border: none; padding: 12px; border-radius: 5px; cursor: pointer; width: 100%; margin-top: 10px; }
         button:hover { background: #43a047; }
+        #clear-button { background: #6c757d; }
     </style>
 </head>
 <body>
-    <div id="toolbar-popup">
+    <div id="toolbar-container">
         <div class="branding">Iris Healing Assistant</div>
         <form id="chat-form">
             <input type="text" id="chat-input" placeholder="Type your query (e.g., 'how to reduce anxiety?')" required>
             <button type="submit">Send</button>
         </form>
         <div id="chat-output"></div>
+        <button id="clear-button">Clear Chat</button>
     </div>
 
     <script>
@@ -44,30 +50,53 @@
             return HIGH_INTENT_KEYWORDS.some(keyword => lowerQuery.includes(keyword));
         }
 
-        // Image URLs from our generated screenshots (for seamless demo)
+        // Image URLs from our generated screenshots (for seamless demo on exact matches)
         const lowIntentImage = 'https://cdn.abacus.ai/images/15dffde4-79c7-4467-a9fd-9e41fde974b8.png'; // Anxiety query image
         const highIntentImage = 'https://cdn.abacus.ai/images/84c363a7-ac25-4975-8d90-98c9a564d666.png'; // Quit drinking with ad image
+
+        // Mock AI response generator (dynamic for any query)
+        function generateMockResponse(query) {
+            return `Here's some wellness advice for "${query}": Try deep breathing, journaling, or seeking support from friends. Stay strong!`;
+        }
+
+        const mockSocialPosts = `<div class='social-posts'>Uplifting post: "Recovery is possible one step at a time!"<br>Another: "Sharing my anxiety win today."</div>`;
+        const mockAd = `<div class='sponsored-ad'>Sponsored: Free counseling from Partner Rehab Center. Call 1-800-HELP-NOW.</div>`;
 
         // Handle form submit
         document.getElementById('chat-form').addEventListener('submit', (e) => {
             e.preventDefault();
-            const query = document.getElementById('chat-input').value;
+            const query = document.getElementById('chat-input').value.trim();
+            if (!query) return; // Ignore empty
+
             const output = document.getElementById('chat-output');
             output.innerHTML = ''; // Clear previous
 
-            let imageSrc = '';
-            if (detectHighIntent(query)) {
-                imageSrc = highIntentImage;
-            } else if (query.toLowerCase().includes('anxiety')) { // Simple check for low-intent demo match
-                imageSrc = lowIntentImage;
+            const isHighIntent = detectHighIntent(query);
+            const mockResponse = generateMockResponse(query);
+
+            // Check for exact matches to use images for seamless demo
+            if (query.toLowerCase().includes('anxiety') && !isHighIntent) {
+                output.innerHTML = `<img src="${lowIntentImage}" alt="Low-Intent Response Demo">`;
+            } else if (query.toLowerCase().includes('quit drinking') && isHighIntent) {
+                output.innerHTML = `<img src="${highIntentImage}" alt="High-Intent Response Demo">`;
             } else {
-                output.innerHTML = '<p>No matching demo image. Try "how to reduce anxiety?" or "help me quit drinking".</p>';
-                return;
+                // Dynamic text response for everything else
+                let responseHTML = mockResponse;
+                if (!isHighIntent) {
+                    responseHTML += mockSocialPosts;
+                } else {
+                    responseHTML += mockAd;
+                }
+                output.innerHTML = responseHTML;
             }
 
-            // Inject image for seamless visual response
-            output.innerHTML = `<img src="${imageSrc}" alt="Toolbar Response Demo">`;
             document.getElementById('chat-input').value = ''; // Reset input
+        });
+
+        // Clear button
+        document.getElementById('clear-button').addEventListener('click', () => {
+            document.getElementById('chat-output').innerHTML = '';
+            document.getElementById('chat-input').value = '';
         });
     </script>
 </body>
