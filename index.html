@@ -3,20 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iris Healing Assistant Demo</title>
+    <title>Iris Healing Assistant Demo (Seamless Image Integration)</title>
     <style>
         body { background: #f0f0f0; font-family: Arial, sans-serif; }
         #toolbar-popup {
-            position: fixed; top: 50px; right: 20px; width: 400px; height: 600px; background: #1a1f2c; /* Deep blue-gray */
-            color: #e0e0e0; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.5); overflow-y: auto;
+            position: fixed; top: 50px; right: 20px; width: 450px; height: 650px; background: #1a1f2c; /* Deep blue-gray from images */
+            color: #e0e0e0; padding: 20px; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.6); overflow-y: auto;
+            font-size: 14px; line-height: 1.5;
         }
-        .branding { font-size: 20px; color: #4caf50; /* Subtle green */ margin-bottom: 10px; }
-        .branding::before { content: '🌸 '; /* Iris flower placeholder */ }
-        #chat-input { width: 100%; padding: 10px; background: #2c3344; border: none; color: #e0e0e0; }
-        #chat-output { margin-top: 20px; background: #232a3b; padding: 10px; border-radius: 5px; }
-        .sponsored-ad { margin-top: 10px; background: #3b4a5e; padding: 10px; border-radius: 5px; font-style: italic; }
-        .social-posts { margin-top: 10px; color: #a5d6a7; /* Light green */ }
-        button { background: #4caf50; color: white; border: none; padding: 10px; cursor: pointer; }
+        .branding { font-size: 22px; color: #4caf50; /* Subtle green */ margin-bottom: 15px; font-weight: bold; }
+        .branding::before { 
+            content: ''; 
+            background: url('https://cdn.abacus.ai/images/5e732ae4-f2ba-4c9f-a945-97b5b8c5ba44.png') no-repeat; 
+            background-size: contain; 
+            width: 24px; height: 24px; display: inline-block; vertical-align: middle; margin-right: 5px; 
+        }
+        #chat-input { width: 100%; padding: 12px; background: #2c3344; border: none; color: #e0e0e0; border-radius: 5px; margin-bottom: 10px; }
+        #chat-output { margin-top: 20px; text-align: center; } /* Center images for seamless feel */
+        #chat-output img { max-width: 100%; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.4); }
+        button { background: #4caf50; color: white; border: none; padding: 12px; border-radius: 5px; cursor: pointer; width: 100%; }
+        button:hover { background: #43a047; }
     </style>
 </head>
 <body>
@@ -30,7 +36,7 @@
     </div>
 
     <script>
-        // POC: AI Intent Detector
+        // POC: AI Intent Detector (10 lines)
         const HIGH_INTENT_KEYWORDS = ['detox', 'relapse', 'quit drinking', 'addiction help', 'rehab'];
 
         function detectHighIntent(query) {
@@ -38,11 +44,9 @@
             return HIGH_INTENT_KEYWORDS.some(keyword => lowerQuery.includes(keyword));
         }
 
-        // Mock AI responses
-        const mockLowIntentResponse = "Here are some tips to reduce anxiety: Practice deep breathing, go for a walk, or meditate. Plus, uplifting recovery posts from Reddit:";
-        const mockHighIntentResponse = "Quitting drinking is a brave step. Start with support groups and professional help. (High-intent detected)";
-        const mockSocialPosts = "<div class='social-posts'>Post 1: 'I overcame anxiety through journaling!'<br>Post 2: 'Recovery story: One day at a time.'</div>";
-        const mockAd = "<div class='sponsored-ad'>Sponsored: Free counseling from Partner Rehab Center. Call 1-800-HELP-NOW.</div>";
+        // Image URLs from our generated screenshots (for seamless demo)
+        const lowIntentImage = 'https://cdn.abacus.ai/images/15dffde4-79c7-4467-a9fd-9e41fde974b8.png'; // Anxiety query image
+        const highIntentImage = 'https://cdn.abacus.ai/images/84c363a7-ac25-4975-8d90-98c9a564d666.png'; // Quit drinking with ad image
 
         // Handle form submit
         document.getElementById('chat-form').addEventListener('submit', (e) => {
@@ -51,12 +55,18 @@
             const output = document.getElementById('chat-output');
             output.innerHTML = ''; // Clear previous
 
+            let imageSrc = '';
             if (detectHighIntent(query)) {
-                output.innerHTML = mockHighIntentResponse + mockAd;
+                imageSrc = highIntentImage;
+            } else if (query.toLowerCase().includes('anxiety')) { // Simple check for low-intent demo match
+                imageSrc = lowIntentImage;
             } else {
-                output.innerHTML = mockLowIntentResponse + mockSocialPosts;
+                output.innerHTML = '<p>No matching demo image. Try "how to reduce anxiety?" or "help me quit drinking".</p>';
+                return;
             }
 
+            // Inject image for seamless visual response
+            output.innerHTML = `<img src="${imageSrc}" alt="Toolbar Response Demo">`;
             document.getElementById('chat-input').value = ''; // Reset input
         });
     </script>
